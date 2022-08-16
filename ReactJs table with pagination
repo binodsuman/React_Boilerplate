@@ -1,0 +1,63 @@
+1. Run npm install react-bootstrap-table-next
+2. Run npm install react-bootstrap-table2-paginator
+3. Create a copy of newHomePage.js
+4. Add the following imports.
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+
+5. Inside renderHostTable() method, add the following code inside the if block (if (this.state.showGrid) ).
+
+           const rows = this.state.hostList.map((host, index)=>{
+                return {...host, id:index+1}
+            });
+            const healthCheckBtn = (cell, row, rowIndex, formatExtraData) => {
+                return (
+                    <Button variant="success" type="submit" onClick={this.handleHealthCheck.bind(this)}>Health Check</Button>
+                );
+            };
+
+            const healthCheckBox = (cell, row, rowIndex, formatExtraData) => {
+                return (
+                    <input
+                        type="checkbox"
+                        checked={row.selected}
+                        onChange={(e) => this.onItemCheck(e, row)}/>
+                );
+            };
+            const columns = [
+                { dataField: 'id', text: '#', sort: false },
+                { dataField: 'name', text: 'Host Name', sort: false },
+                { dataField: 'reachable', text: 'Host Reachable', sort: false },
+                { dataField: 'running', text: 'Service Running', sort: false },
+                { dataField: 'selected', text: 'Select', formatter:healthCheckBox,sort: false },
+                { dataField: '', text: 'Health Check', formatter:healthCheckBtn,sort: false }
+              ];
+            const defaultSorted = [{
+                dataField: 'name',
+                order: 'desc'
+              }];
+            
+              const pagination = paginationFactory({
+                page: 1,
+                sizePerPage: 10,
+                lastPageText: '>>',
+                firstPageText: '<<',
+                nextPageText: '>',
+                prePageText: '<',
+                showTotal: true,
+                alwaysShowAllBtns: true,
+                onPageChange: function (page, sizePerPage) {
+                  console.log('page', page);
+                  console.log('sizePerPage', sizePerPage);
+                },
+                onSizePerPageChange: function (page, sizePerPage) {
+                  console.log('page', page);
+                  console.log('sizePerPage', sizePerPage);
+                }
+              });
+            
+              return (
+                <div>
+                  <BootstrapTable table striped bordered hover keyField='id' data={rows} columns={columns} defaultSorted={defaultSorted} pagination={pagination} />
+                </div>
+              );
